@@ -1,5 +1,7 @@
 use crate::{
     datastructures::{
+        AtomSpatial,
+        AtomSpatial::{PointsTo, LS},
         Entailment, Expr,
         Expr::{Nil, Var},
         Formula, Op,
@@ -7,9 +9,9 @@ use crate::{
         Pure,
         Pure::{And, True},
         Rule, Spatial,
-        Spatial::{Emp, PointsTo, SepConj, LS},
+        Spatial::{Emp, SepConj},
     },
-    misc::find_first,
+    misc::find_and_remove,
 };
 
 pub struct Substitution;
@@ -47,14 +49,22 @@ impl Substitution {
         }
     }
 
-    fn subst_spatial(subst: &(String, Expr), sp: &mut Spatial) -> Spatial {
+    fn subst_atom_spatial(subst: &(String, Expr), sp: &mut AtomSpatial) -> AtomSpatial {
         match sp {
             PointsTo(v, e) => PointsTo(Self::subst_impl(subst, v), Self::subst_impl(subst, e)),
-            SepConj(l, r) => SepConj(
-                Box::new(Self::subst_spatial(subst, l)),
-                Box::new(Self::subst_spatial(subst, r)),
-            ),
             LS(v, e) => LS(Self::subst_impl(subst, v), Self::subst_impl(subst, e)),
+        }
+    }
+
+    fn subst_spatial(subst: &(String, Expr), sp: &mut Spatial) -> Spatial {
+        match sp {
+            SepConj(atom_spatials) => SepConj(
+                atom_spatials
+                    .iter_mut()
+                    .map(move |asp| Self::subst_atom_spatial(subst, asp))
+                    .collect::<Vec<AtomSpatial>>(),
+            ),
+
             Emp => Emp,
         }
     }
@@ -62,13 +72,13 @@ impl Substitution {
     fn substitute(subst: (String, Expr), goal: Entailment) -> Entailment {
         let (mut antecedent, mut consequent) = goal.destroy();
 
-        let new_pure_ant = Self::subst_pure(&subst, antecedent.get_pure());
+        let new_pure_ant = Self::subst_pure(&subst, antecedent.get_pure_mut());
 
-        let new_spatial_ant = Self::subst_spatial(&subst, antecedent.get_spatial());
+        let new_spatial_ant = Self::subst_spatial(&subst, antecedent.get_spatial_mut());
 
-        let new_pure_cons = Self::subst_pure(&subst, consequent.get_pure());
+        let new_pure_cons = Self::subst_pure(&subst, consequent.get_pure_mut());
 
-        let new_spatial_cons = Self::subst_spatial(&subst, consequent.get_spatial());
+        let new_spatial_cons = Self::subst_spatial(&subst, consequent.get_spatial_mut());
 
         Entailment {
             antecedent: Formula(new_pure_ant, new_spatial_ant),
@@ -82,16 +92,11 @@ impl Rule for Substitution {
     }
 
     fn premisses(&self, mut goal: Entailment) -> Option<Vec<Entailment>> {
-        if let And(pure_sub) = goal.antecedent.get_pure() {
-            if let Some(index) = find_first(&pure_sub, move |x| match x {
-                &AtomEq(_, _) => {
-                    return true;
-                }
-                _ => return false,
-            }) {
+        if let And(pure_sub) = goal.antecedent.get_pure_mut() {
+            if let Some(elem) = find_and_remove(pure_sub, move |x| x.is_eq()) {
                 let mut subst = ("".to_string(), Nil);
 
-                if let AtomEq(l, r) = pure_sub.remove(index) {
+                if let AtomEq(l, r) = elem {
                     if let Var(v) = l {
                         subst = (v.0.clone(), r.clone());
                     } else if let Var(v) = r {
@@ -103,5 +108,66 @@ impl Rule for Substitution {
             }
         }
         None
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::Substitution;
+    use crate::datastructures::{
+        AtomSpatial::{PointsTo, LS},
+        Entailment,
+        Expr::{Nil, Var},
+        Formula,
+        Op::{AtomEq, AtomNeq},
+        Pure::And,
+        Rule,
+        Spatial::SepConj,
+        Variable,
+    };
+
+    #[test]
+    pub fn test_substitute() {
+        let goal = Entailment {
+            antecedent: Formula(
+                And(vec![
+                    AtomEq(Var(Variable("x".to_string())), Nil),
+                    AtomNeq(
+                        Var(Variable("y".to_string())),
+                        Var(Variable("x".to_string())),
+                    ),
+                ]),
+                SepConj(vec![PointsTo(
+                    Var(Variable("y".to_string())),
+                    Var(Variable("x".to_string())),
+                )]),
+            ),
+            consequent: Formula(
+                And(vec![AtomNeq(
+                    Var(Variable("z".to_string())),
+                    Var(Variable("x".to_string())),
+                )]),
+                SepConj(vec![LS(Var(Variable("x".to_string())), Nil)]),
+            ),
+        };
+
+        let goal_expected = Entailment {
+            antecedent: Formula(
+                And(vec![AtomNeq(Var(Variable("y".to_string())), Nil)]),
+                SepConj(vec![PointsTo(Var(Variable("y".to_string())), Nil)]),
+            ),
+            consequent: Formula(
+                And(vec![AtomNeq(Var(Variable("z".to_string())), Nil)]),
+                SepConj(vec![LS(Nil, Nil)]),
+            ),
+        };
+
+        let premisses = Substitution.premisses(goal);
+        if let Some(prem) = premisses {
+            assert_eq!(1, prem.len());
+            assert_eq!(goal_expected, prem[0]);
+        } else {
+            assert!(false);
+        }
     }
 }
