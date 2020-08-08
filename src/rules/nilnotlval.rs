@@ -5,9 +5,9 @@ use crate::datastructures::{
 
 pub struct NilNotLVal;
 impl Rule for NilNotLVal {
-    fn predicate(&self, goal: crate::datastructures::Entailment) -> bool {
+    fn predicate(&self, goal: &Entailment) -> bool {
         let mut add_new = false;
-        let (antecedent, _) = goal.destroy();
+        let antecedent = &goal.antecedent;
         if let SepConj(atom_spatials) = antecedent.get_spatial() {
             let points_to_facts = atom_spatials.iter().filter(move |x| x.is_points_to());
 

@@ -87,7 +87,7 @@ impl Substitution {
     }
 }
 impl Rule for Substitution {
-    fn predicate(&self, _goal: Entailment) -> bool {
+    fn predicate(&self, _goal: &Entailment) -> bool {
         true
     }
 

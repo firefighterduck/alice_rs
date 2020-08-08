@@ -38,7 +38,7 @@ pub struct Entailment {
     pub consequent: Formula,
 }
 pub trait Rule {
-    fn predicate(&self, goal: Entailment) -> bool;
+    fn predicate(&self, goal: &Entailment) -> bool;
     fn premisses(&self, goal: Entailment) -> Option<Vec<Entailment>>;
 }
 

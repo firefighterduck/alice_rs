@@ -5,14 +5,11 @@ use crate::{
 
 pub struct EqReflexiveL;
 impl Rule for EqReflexiveL {
-    fn predicate(&self, _goal: crate::datastructures::Entailment) -> bool {
+    fn predicate(&self, _goal: &Entailment) -> bool {
         true
     }
 
-    fn premisses(
-        &self,
-        goal: crate::datastructures::Entailment,
-    ) -> Option<Vec<crate::datastructures::Entailment>> {
+    fn premisses(&self, goal: Entailment) -> Option<Vec<Entailment>> {
         let (mut antecedent, consequent) = goal.destroy();
 
         if let And(pure_vec) = antecedent.get_pure_mut() {
