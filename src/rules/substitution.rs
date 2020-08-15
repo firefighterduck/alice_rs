@@ -127,7 +127,7 @@ mod test {
     };
 
     #[test]
-    pub fn test_substitute() {
+    pub fn test_substitute() -> Result<(), String> {
         let goal = Entailment {
             antecedent: Formula(
                 And(vec![
@@ -166,8 +166,9 @@ mod test {
         if let Some(prem) = premisses {
             assert_eq!(1, prem.len());
             assert_eq!(goal_expected, prem[0]);
+            Ok(())
         } else {
-            assert!(false);
+            Err("Expected third test to succeed!".to_string())
         }
     }
 }

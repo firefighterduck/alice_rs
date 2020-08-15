@@ -73,6 +73,8 @@ impl Rule for NilNotLVal {
         if let &Var(_) = &points_to_to_add {
             if let And(pure_ops) = &mut ant_pure {
                 pure_ops.push(AtomNeq(points_to_to_add, Nil));
+            } else {
+                ant_pure = And(vec![AtomNeq(points_to_to_add, Nil)]);
             }
         }
 
@@ -83,6 +85,7 @@ impl Rule for NilNotLVal {
     }
 }
 
+#[cfg(test)]
 mod test {
     use super::NilNotLVal;
     use crate::datastructures::{
@@ -90,7 +93,7 @@ mod test {
         Entailment,
         Expr::{Nil, Var},
         Formula,
-        Op::{AtomEq, AtomNeq},
+        Op::AtomNeq,
         Pure::{And, True},
         Rule,
         Spatial::{Emp, SepConj},
@@ -99,24 +102,7 @@ mod test {
 
     #[test]
     pub fn test_nil_not_lval() -> Result<(), ()> {
-        let goal = Entailment {
-            antecedent: Formula(
-                And(vec![AtomNeq(Var(Variable("y".to_string())), Nil)]),
-                SepConj(vec![
-                    PointsTo(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("x".to_string())),
-                    ),
-                    PointsTo(
-                        Var(Variable("x".to_string())),
-                        Var(Variable("z".to_string())),
-                    ),
-                ]),
-            ),
-            consequent: Formula(True, Emp),
-        };
-
-        let goal_expected = Entailment {
+        let goal_not_applicable = Entailment {
             antecedent: Formula(
                 And(vec![
                     AtomNeq(Var(Variable("y".to_string())), Nil),
@@ -136,10 +122,95 @@ mod test {
             consequent: Formula(True, Emp),
         };
 
-        let premisses = NilNotLVal.premisses(goal);
+        assert_eq!(false, NilNotLVal.predicate(&goal_not_applicable));
+
+        let goal1 = Entailment {
+            antecedent: Formula(
+                And(vec![AtomNeq(Var(Variable("y".to_string())), Nil)]),
+                SepConj(vec![
+                    PointsTo(
+                        Var(Variable("y".to_string())),
+                        Var(Variable("x".to_string())),
+                    ),
+                    PointsTo(
+                        Var(Variable("x".to_string())),
+                        Var(Variable("z".to_string())),
+                    ),
+                ]),
+            ),
+            consequent: Formula(True, Emp),
+        };
+
+        assert!(NilNotLVal.predicate(&goal1));
+
+        let goal_expected1 = Entailment {
+            antecedent: Formula(
+                And(vec![
+                    AtomNeq(Var(Variable("y".to_string())), Nil),
+                    AtomNeq(Var(Variable("x".to_string())), Nil),
+                ]),
+                SepConj(vec![
+                    PointsTo(
+                        Var(Variable("y".to_string())),
+                        Var(Variable("x".to_string())),
+                    ),
+                    PointsTo(
+                        Var(Variable("x".to_string())),
+                        Var(Variable("z".to_string())),
+                    ),
+                ]),
+            ),
+            consequent: Formula(True, Emp),
+        };
+
+        let premisses = NilNotLVal.premisses(goal1);
         if let Some(prem) = premisses {
             assert_eq!(1, prem.len());
-            assert_eq!(goal_expected, prem[0]);
+            assert_eq!(goal_expected1, prem[0]);
+        } else {
+            return Err(());
+        }
+
+        let goal2 = Entailment {
+            antecedent: Formula(
+                True,
+                SepConj(vec![
+                    PointsTo(
+                        Var(Variable("y".to_string())),
+                        Var(Variable("x".to_string())),
+                    ),
+                    PointsTo(
+                        Var(Variable("x".to_string())),
+                        Var(Variable("z".to_string())),
+                    ),
+                ]),
+            ),
+            consequent: Formula(True, Emp),
+        };
+
+        assert!(NilNotLVal.predicate(&goal2));
+
+        let goal_expected2 = Entailment {
+            antecedent: Formula(
+                And(vec![AtomNeq(Var(Variable("y".to_string())), Nil)]),
+                SepConj(vec![
+                    PointsTo(
+                        Var(Variable("y".to_string())),
+                        Var(Variable("x".to_string())),
+                    ),
+                    PointsTo(
+                        Var(Variable("x".to_string())),
+                        Var(Variable("z".to_string())),
+                    ),
+                ]),
+            ),
+            consequent: Formula(True, Emp),
+        };
+
+        let premisses = NilNotLVal.premisses(goal2);
+        if let Some(prem) = premisses {
+            assert_eq!(1, prem.len());
+            assert_eq!(goal_expected2, prem[0]);
             return Ok(());
         } else {
             return Err(());

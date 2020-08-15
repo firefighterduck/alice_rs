@@ -1,18 +1,16 @@
-use crate::{
-    datastructures::{Entailment, Op::AtomEq, Pure::And, Rule},
-    misc::find_and_remove,
-};
+use crate::datastructures::{Entailment, Op::AtomEq, Pure::And, Rule};
+use crate::misc::find_and_remove;
+pub struct EqReflexiveR;
 
-pub struct EqReflexiveL;
-impl Rule for EqReflexiveL {
+impl Rule for EqReflexiveR {
     fn predicate(&self, _goal: &Entailment) -> bool {
         true
     }
 
     fn premisses(&self, goal: Entailment) -> Option<Vec<Entailment>> {
-        let (mut antecedent, consequent) = goal.destroy();
+        let (antecedent, mut consequent) = goal.destroy();
 
-        if let And(pure_vec) = antecedent.get_pure_mut() {
+        if let And(pure_vec) = consequent.get_pure_mut() {
             if let Some(_) = find_and_remove(pure_vec, move |x| match x {
                 AtomEq(l, r) => *l == *r,
                 _ => false,
@@ -29,7 +27,7 @@ impl Rule for EqReflexiveL {
 
 #[cfg(test)]
 mod test {
-    use super::EqReflexiveL;
+    use super::EqReflexiveR;
     use crate::datastructures::{
         Entailment,
         Expr::{Nil, Var},
@@ -44,21 +42,21 @@ mod test {
     #[test]
     fn test_eq_reflexive_l() -> Result<(), String> {
         let goal1 = Entailment {
-            antecedent: Formula(
+            antecedent: Formula(True, Emp),
+            consequent: Formula(
                 And(vec![
                     AtomEq(Nil, Nil),
                     AtomNeq(Nil, Var(Variable("x".to_string()))),
                 ]),
                 Emp,
             ),
-            consequent: Formula(True, Emp),
         };
         let goal1_expected = Entailment {
-            antecedent: Formula(And(vec![AtomNeq(Nil, Var(Variable("x".to_string())))]), Emp),
-            consequent: Formula(True, Emp),
+            antecedent: Formula(True, Emp),
+            consequent: Formula(And(vec![AtomNeq(Nil, Var(Variable("x".to_string())))]), Emp),
         };
 
-        let premisses1 = EqReflexiveL.premisses(goal1);
+        let premisses1 = EqReflexiveR.premisses(goal1);
         if let Some(prem) = premisses1 {
             assert_eq!(1, prem.len());
             assert_eq!(goal1_expected, prem[0]);
@@ -67,21 +65,21 @@ mod test {
         }
 
         let goal2 = Entailment {
-            antecedent: Formula(
+            antecedent: Formula(True, Emp),
+            consequent: Formula(
                 And(vec![
                     AtomEq(Nil, Nil),
                     AtomEq(Nil, Var(Variable("x".to_string()))),
                 ]),
                 Emp,
             ),
-            consequent: Formula(True, Emp),
         };
         let goal2_expected = Entailment {
-            antecedent: Formula(And(vec![AtomEq(Nil, Var(Variable("x".to_string())))]), Emp),
-            consequent: Formula(True, Emp),
+            antecedent: Formula(True, Emp),
+            consequent: Formula(And(vec![AtomEq(Nil, Var(Variable("x".to_string())))]), Emp),
         };
 
-        let premisses2 = EqReflexiveL.premisses(goal2);
+        let premisses2 = EqReflexiveR.premisses(goal2);
         if let Some(prem) = premisses2 {
             assert_eq!(1, prem.len());
             assert_eq!(goal2_expected, prem[0]);
@@ -90,21 +88,21 @@ mod test {
         }
 
         let goal3 = Entailment {
-            antecedent: Formula(
+            antecedent: Formula(True, Emp),
+            consequent: Formula(
                 And(vec![AtomEq(
                     Var(Variable("x".to_string())),
                     Var(Variable("x".to_string())),
                 )]),
                 Emp,
             ),
-            consequent: Formula(True, Emp),
         };
         let goal3_expected = Entailment {
-            antecedent: Formula(And(vec![]), Emp),
-            consequent: Formula(True, Emp),
+            antecedent: Formula(True, Emp),
+            consequent: Formula(And(vec![]), Emp),
         };
 
-        let premisses3 = EqReflexiveL.premisses(goal3);
+        let premisses3 = EqReflexiveR.premisses(goal3);
         if let Some(prem) = premisses3 {
             assert_eq!(1, prem.len());
             assert_eq!(goal3_expected, prem[0]);

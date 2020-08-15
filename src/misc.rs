@@ -17,7 +17,7 @@ where
     P: Fn(&T) -> bool,
 {
     if let Some(index) = find_first(&vec, pred) {
-        let elem = vec.remove(index);
+        let elem = vec.swap_remove(index);
         Some(elem)
     } else {
         None
@@ -42,7 +42,7 @@ pub fn test_find_and_remove() {
     let pred = |x: &i32| *x == 3;
 
     assert_eq!(Some(3), find_and_remove(&mut vec, pred));
-    assert_eq!(vec![1, 2, 3, 5], vec);
+    assert_eq!(vec![1, 2, 5, 3], vec);
 
     let mut vec2 = vec![1, 2, 3, 3, 5];
     let pred2 = |x: &i32| *x == 6;

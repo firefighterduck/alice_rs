@@ -1,42 +1,45 @@
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct Variable(pub String);
+
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub enum Expr {
     Nil,
     Var(Variable),
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Op {
     AtomEq(Expr, Expr),
     AtomNeq(Expr, Expr),
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Pure {
     And(Vec<Op>),
     True,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum AtomSpatial {
     PointsTo(Expr, Expr),
     LS(Expr, Expr),
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub enum Spatial {
     SepConj(Vec<AtomSpatial>),
     Emp,
 }
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Formula(pub Pure, pub Spatial);
+
 #[derive(PartialEq, Eq, Debug)]
 pub struct Entailment {
     pub antecedent: Formula,
     pub consequent: Formula,
 }
+
 pub trait Rule {
     fn predicate(&self, goal: &Entailment) -> bool;
     fn premisses(&self, goal: Entailment) -> Option<Vec<Entailment>>;
@@ -98,6 +101,18 @@ impl AtomSpatial {
         match self {
             AtomSpatial::LS(_, _) => true,
             _ => false,
+        }
+    }
+}
+
+impl Spatial {
+    pub fn add(mut self, new: AtomSpatial) -> Self {
+        match &mut self {
+            Spatial::SepConj(vec) => {
+                vec.push(new);
+                self
+            }
+            Spatial::Emp => Spatial::SepConj(vec![new]),
         }
     }
 }

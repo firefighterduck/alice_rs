@@ -6,7 +6,7 @@ impl Rule for Contradiction {
         true
     }
 
-    fn premisses(&self, mut goal: Entailment) -> Option<Vec<Entailment>> {
+    fn premisses(&self, goal: Entailment) -> Option<Vec<Entailment>> {
         if let And(pure_sub) = goal.antecedent.get_pure() {
             if let Some(_) = pure_sub.iter().find(|&x| match x {
                 AtomNeq(l, r) => *l == *r,
@@ -19,6 +19,7 @@ impl Rule for Contradiction {
     }
 }
 
+#[cfg(test)]
 mod test {
     use super::Contradiction;
     use crate::datastructures::{
@@ -68,6 +69,6 @@ mod test {
             return Err("Expected second test to fail!".to_string());
         }
 
-        return Ok(());
+        Ok(())
     }
 }

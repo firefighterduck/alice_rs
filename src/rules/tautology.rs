@@ -6,7 +6,7 @@ impl Rule for Tautology {
         true
     }
 
-    fn premisses(&self, mut goal: Entailment) -> Option<Vec<Entailment>> {
+    fn premisses(&self, goal: Entailment) -> Option<Vec<Entailment>> {
         if let Emp = goal.antecedent.get_spatial() {
             if let &Emp = goal.consequent.get_spatial() {
                 if let &True = goal.consequent.get_pure() {
@@ -18,6 +18,7 @@ impl Rule for Tautology {
     }
 }
 
+#[cfg(test)]
 mod test {
     use super::Tautology;
     use crate::datastructures::{
