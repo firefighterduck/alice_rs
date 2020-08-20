@@ -61,7 +61,56 @@ impl Op {
     }
 }
 
+impl Expr {
+    pub fn get_var_opt(&self) -> Option<Variable> {
+        match self {
+            Self::Var(v) => Some(v.clone()),
+            Self::Nil => None,
+        }
+    }
+}
+
 impl Formula {
+    pub fn get_pure_vars(&self) -> Option<Vec<Variable>> {
+        if let Pure::And(pure_vec) = &self.0 {
+            let mut var_vec: Vec<Variable> = Vec::with_capacity(pure_vec.len());
+            for op in pure_vec {
+                let (l, r) = match op {
+                    Op::AtomEq(l, r) => (l, r),
+                    Op::AtomNeq(l, r) => (l, r),
+                };
+                if let Some(v) = l.get_var_opt() {
+                    var_vec.push(v);
+                }
+                if let Some(v) = r.get_var_opt() {
+                    var_vec.push(v);
+                }
+            }
+            return Some(var_vec);
+        }
+        None
+    }
+
+    pub fn get_spatial_vars(&self) -> Option<Vec<Variable>> {
+        if let Spatial::SepConj(spatial_vec) = &self.1 {
+            let mut var_vec: Vec<Variable> = Vec::with_capacity(spatial_vec.len());
+            for atom in spatial_vec {
+                let (l, r) = match atom {
+                    AtomSpatial::LS(l, r) => (l, r),
+                    AtomSpatial::PointsTo(l, r) => (l, r),
+                };
+                if let Some(v) = l.get_var_opt() {
+                    var_vec.push(v);
+                }
+                if let Some(v) = r.get_var_opt() {
+                    var_vec.push(v);
+                }
+            }
+            return Some(var_vec);
+        }
+        None
+    }
+
     pub fn get_pure(&self) -> &Pure {
         &self.0
     }
@@ -86,6 +135,28 @@ impl Formula {
 impl Entailment {
     pub fn destroy(self) -> (Formula, Formula) {
         (self.antecedent, self.consequent)
+    }
+
+    pub fn is_normal_form(&self) -> bool {
+        if let Spatial::SepConj(vec) = self.antecedent.get_spatial() {
+            if vec.iter().any(|x: &AtomSpatial| x.is_ls()) {
+                return false;
+            }
+        }
+
+        let mut vars = Vec::new();
+        if let Some(ref mut vec) = self.antecedent.get_pure_vars() {
+            vars.append(vec);
+        }
+        if let Some(ref mut vec) = self.antecedent.get_spatial_vars() {
+            vars.append(vec);
+        }
+
+        'outer: for o_var in vars.as_slice() {
+            'inner: for i_var in vars.as_slice() {}
+        }
+
+        false
     }
 }
 
