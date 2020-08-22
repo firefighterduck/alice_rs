@@ -6,8 +6,8 @@ use crate::datastructures::{
 pub struct Frame;
 
 impl Rule for Frame {
-    fn predicate(&self, _goal: &Entailment) -> bool {
-        todo!()
+    fn predicate(&self, goal: &Entailment) -> bool {
+        goal.is_normal_form()
     }
 
     fn premisses(&self, goal: Entailment) -> Option<Vec<Entailment>> {

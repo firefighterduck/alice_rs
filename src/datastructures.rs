@@ -140,7 +140,7 @@ impl Entailment {
     pub fn is_normal_form(&self) -> bool {
         if let Spatial::SepConj(vec) = self.antecedent.get_spatial() {
             if vec.iter().any(|x: &AtomSpatial| x.is_ls()) {
-                return false;
+                return false; //There are no LS allowed for normal form
             }
         }
 
@@ -152,11 +152,38 @@ impl Entailment {
             vars.append(vec);
         }
 
-        'outer: for o_var in vars.as_slice() {
-            'inner: for i_var in vars.as_slice() {}
+        if let Pure::And(pures) = self.antecedent.get_pure() {
+            'outer: for o_var in vars.as_slice() {
+                if !pures.iter().any(|x| {
+                    if let Op::AtomNeq(l, r) = x {
+                        (*l == Expr::Var(o_var.clone()) && *r == Expr::Nil)
+                            || (*r == Expr::Var(o_var.clone()) && *l == Expr::Nil)
+                    } else {
+                        return false; //There are no AtomEqs allowed for normal form
+                    }
+                }) {
+                    return false; //There is no inequality for the variable o_var with Nil which is necessary for normal form
+                }
+                for i_var in vars.as_slice() {
+                    if i_var == o_var {
+                        continue 'outer;
+                    }
+                    if !pures.iter().any(|x| {
+                        if let Op::AtomNeq(l, r) = x {
+                            (*l == Expr::Var(o_var.clone()) && *r == Expr::Var(i_var.clone()))
+                                || (*r == Expr::Var(o_var.clone())
+                                    && *l == Expr::Var(i_var.clone()))
+                        } else {
+                            return false; //There are no AtomEqs allowed for normal form
+                        }
+                    }) {
+                        return false; //There is no inequality for the variable o_var with i_var which is necessary for normal form
+                    }
+                }
+            }
         }
 
-        false
+        true
     }
 }
 
@@ -185,5 +212,39 @@ impl Spatial {
             }
             Spatial::Emp => Spatial::SepConj(vec![new]),
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::{
+        AtomSpatial::{PointsTo, LS},
+        Entailment,
+        Expr::{Nil, Var},
+        Formula,
+        Pure::{And, True},
+        Spatial::{Emp, SepConj},
+        Variable,
+    };
+
+    #[test]
+    fn test_is_nomal_form() {
+        let not_normal1 = Entailment {
+            antecedent: Formula(True, SepConj(vec![LS(Var(Variable("x".to_string())), Nil)])),
+            consequent: Formula(True, Emp),
+        };
+        assert_eq!(false, not_normal1.is_normal_form());
+
+        let normal1 = Entailment {
+            antecedent: Formula(
+                And(vec![super::Op::AtomNeq(
+                    Var(Variable("x".to_string())),
+                    Nil,
+                )]),
+                SepConj(vec![PointsTo(Var(Variable("x".to_string())), Nil)]),
+            ),
+            consequent: Formula(True, Emp),
+        };
+        assert!(normal1.is_normal_form());
     }
 }
