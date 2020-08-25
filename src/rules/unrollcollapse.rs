@@ -72,54 +72,46 @@ mod test {
     use super::UnrollCollapse;
     use crate::datastructures::{
         AtomSpatial::{PointsTo, LS},
-        Entailment,
+        Entailment, Expr,
         Expr::Nil,
-        Expr::Var,
         Formula,
         Op::{AtomEq, AtomNeq},
         Pure::{And, True},
         Rule,
         Spatial::SepConj,
-        Variable,
     };
     #[test]
     pub fn test_unrollcollapse() {
         let goal = Entailment {
-            antecedent: Formula(True, SepConj(vec![LS(Var(Variable("z".to_string())), Nil)])),
+            antecedent: Formula(True, SepConj(vec![LS(Expr::new_var("z"), Nil)])),
             consequent: Formula(
-                And(vec![AtomEq(Nil, Var(Variable("x".to_string())))]),
-                SepConj(vec![LS(Var(Variable("x".to_string())), Nil)]),
+                And(vec![AtomEq(Nil, Expr::new_var("x"))]),
+                SepConj(vec![LS(Expr::new_var("x"), Nil)]),
             ),
         };
 
         let expected = vec![
             Entailment {
-                antecedent: Formula(
-                    And(vec![AtomEq(Var(Variable("z".to_string())), Nil)]),
-                    SepConj(vec![]),
-                ),
+                antecedent: Formula(And(vec![AtomEq(Expr::new_var("z"), Nil)]), SepConj(vec![])),
                 consequent: Formula(
-                    And(vec![AtomEq(Nil, Var(Variable("x".to_string())))]),
-                    SepConj(vec![LS(Var(Variable("x".to_string())), Nil)]),
+                    And(vec![AtomEq(Nil, Expr::new_var("x"))]),
+                    SepConj(vec![LS(Expr::new_var("x"), Nil)]),
                 ),
             },
             Entailment {
                 antecedent: Formula(
                     And(vec![
-                        AtomNeq(Var(Variable("z".to_string())), Nil),
-                        AtomNeq(Var(Variable("zx".to_string())), Nil),
+                        AtomNeq(Expr::new_var("z"), Nil),
+                        AtomNeq(Expr::new_var("zx"), Nil),
                     ]),
                     SepConj(vec![
-                        PointsTo(
-                            Var(Variable("z".to_string())),
-                            Var(Variable("zx".to_string())),
-                        ),
-                        PointsTo(Var(Variable("zx".to_string())), Nil),
+                        PointsTo(Expr::new_var("z"), Expr::new_var("zx")),
+                        PointsTo(Expr::new_var("zx"), Nil),
                     ]),
                 ),
                 consequent: Formula(
-                    And(vec![AtomEq(Nil, Var(Variable("x".to_string())))]),
-                    SepConj(vec![LS(Var(Variable("x".to_string())), Nil)]),
+                    And(vec![AtomEq(Nil, Expr::new_var("x"))]),
+                    SepConj(vec![LS(Expr::new_var("x"), Nil)]),
                 ),
             },
         ];

@@ -22,14 +22,13 @@ impl Rule for Tautology {
 mod test {
     use super::Tautology;
     use crate::datastructures::{
-        Entailment,
-        Expr::{Nil, Var},
+        Entailment, Expr,
+        Expr::Nil,
         Formula,
         Op::{AtomEq, AtomNeq},
         Pure::{And, True},
         Rule,
         Spatial::{Emp, SepConj},
-        Variable,
     };
 
     #[test]
@@ -37,10 +36,7 @@ mod test {
         let goal1 = Entailment {
             antecedent: Formula(
                 And(vec![
-                    AtomNeq(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("y".to_string())),
-                    ),
+                    AtomNeq(Expr::new_var("y"), Expr::new_var("y")),
                     AtomEq(Nil, Nil),
                 ]),
                 Emp,
@@ -58,10 +54,7 @@ mod test {
         let goal2 = Entailment {
             antecedent: Formula(
                 And(vec![
-                    AtomNeq(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("y".to_string())),
-                    ),
+                    AtomNeq(Expr::new_var("y"), Expr::new_var("y")),
                     AtomEq(Nil, Nil),
                 ]),
                 Emp,
@@ -74,6 +67,6 @@ mod test {
             return Err("Expected second test to fail!".to_string());
         }
 
-        return Ok(());
+        Ok(())
     }
 }

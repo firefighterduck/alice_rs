@@ -31,30 +31,26 @@ impl Rule for EqReflexiveL {
 mod test {
     use super::EqReflexiveL;
     use crate::datastructures::{
-        Entailment,
-        Expr::{Nil, Var},
+        Entailment, Expr,
+        Expr::Nil,
         Formula,
         Op::{AtomEq, AtomNeq},
         Pure::{And, True},
         Rule,
         Spatial::Emp,
-        Variable,
     };
 
     #[test]
     fn test_eq_reflexive_l() -> Result<(), String> {
         let goal1 = Entailment {
             antecedent: Formula(
-                And(vec![
-                    AtomEq(Nil, Nil),
-                    AtomNeq(Nil, Var(Variable("x".to_string()))),
-                ]),
+                And(vec![AtomEq(Nil, Nil), AtomNeq(Nil, Expr::new_var("x"))]),
                 Emp,
             ),
             consequent: Formula(True, Emp),
         };
         let goal1_expected = Entailment {
-            antecedent: Formula(And(vec![AtomNeq(Nil, Var(Variable("x".to_string())))]), Emp),
+            antecedent: Formula(And(vec![AtomNeq(Nil, Expr::new_var("x"))]), Emp),
             consequent: Formula(True, Emp),
         };
 
@@ -68,16 +64,13 @@ mod test {
 
         let goal2 = Entailment {
             antecedent: Formula(
-                And(vec![
-                    AtomEq(Nil, Nil),
-                    AtomEq(Nil, Var(Variable("x".to_string()))),
-                ]),
+                And(vec![AtomEq(Nil, Nil), AtomEq(Nil, Expr::new_var("x"))]),
                 Emp,
             ),
             consequent: Formula(True, Emp),
         };
         let goal2_expected = Entailment {
-            antecedent: Formula(And(vec![AtomEq(Nil, Var(Variable("x".to_string())))]), Emp),
+            antecedent: Formula(And(vec![AtomEq(Nil, Expr::new_var("x"))]), Emp),
             consequent: Formula(True, Emp),
         };
 
@@ -91,10 +84,7 @@ mod test {
 
         let goal3 = Entailment {
             antecedent: Formula(
-                And(vec![AtomEq(
-                    Var(Variable("x".to_string())),
-                    Var(Variable("x".to_string())),
-                )]),
+                And(vec![AtomEq(Expr::new_var("x"), Expr::new_var("x"))]),
                 Emp,
             ),
             consequent: Formula(True, Emp),

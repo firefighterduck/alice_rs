@@ -23,24 +23,18 @@ impl Rule for Contradiction {
 mod test {
     use super::Contradiction;
     use crate::datastructures::{
-        Entailment,
-        Expr::Var,
-        Formula,
+        Entailment, Expr, Formula,
         Op::AtomNeq,
         Pure::{And, True},
         Rule,
         Spatial::Emp,
-        Variable,
     };
 
     #[test]
     pub fn test_contradiction() -> Result<(), String> {
         let goal = Entailment {
             antecedent: Formula(
-                And(vec![AtomNeq(
-                    Var(Variable("y".to_string())),
-                    Var(Variable("y".to_string())),
-                )]),
+                And(vec![AtomNeq(Expr::new_var("y"), Expr::new_var("y"))]),
                 Emp,
             ),
             consequent: Formula(True, Emp),
@@ -55,10 +49,7 @@ mod test {
 
         let goal2 = Entailment {
             antecedent: Formula(
-                And(vec![AtomNeq(
-                    Var(Variable("y".to_string())),
-                    Var(Variable("x".to_string())),
-                )]),
+                And(vec![AtomNeq(Expr::new_var("y"), Expr::new_var("x"))]),
                 Emp,
             ),
             consequent: Formula(True, Emp),

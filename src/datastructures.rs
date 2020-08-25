@@ -68,6 +68,10 @@ impl Expr {
             Self::Nil => None,
         }
     }
+
+    pub fn new_var(name: &str) -> Self {
+        Expr::Var(Variable(name.to_string()))
+    }
 }
 
 impl Formula {
@@ -219,7 +223,7 @@ impl Spatial {
 mod test {
     use super::{
         AtomSpatial::{PointsTo, LS},
-        Entailment,
+        Entailment, Expr,
         Expr::{Nil, Var},
         Formula,
         Pure::{And, True},
@@ -230,18 +234,15 @@ mod test {
     #[test]
     fn test_is_nomal_form() {
         let not_normal1 = Entailment {
-            antecedent: Formula(True, SepConj(vec![LS(Var(Variable("x".to_string())), Nil)])),
+            antecedent: Formula(True, SepConj(vec![LS(Expr::new_var("x"), Nil)])),
             consequent: Formula(True, Emp),
         };
         assert_eq!(false, not_normal1.is_normal_form());
 
         let normal1 = Entailment {
             antecedent: Formula(
-                And(vec![super::Op::AtomNeq(
-                    Var(Variable("x".to_string())),
-                    Nil,
-                )]),
-                SepConj(vec![PointsTo(Var(Variable("x".to_string())), Nil)]),
+                And(vec![super::Op::AtomNeq(Expr::new_var("x"), Nil)]),
+                SepConj(vec![PointsTo(Expr::new_var("x"), Nil)]),
             ),
             consequent: Formula(True, Emp),
         };

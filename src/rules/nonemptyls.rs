@@ -77,3 +77,108 @@ impl Rule for NonEmptyLS {
         None
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::NonEmptyLS;
+    use crate::datastructures::{
+        AtomSpatial::{PointsTo, LS},
+        Entailment, Expr,
+        Expr::Nil,
+        Formula,
+        Op::AtomNeq,
+        Pure::And,
+        Rule,
+        Spatial::SepConj,
+    };
+
+    #[test]
+    fn test_nil_not_lval() -> Result<(), String> {
+        let invalid_goal1 = Entailment {
+            antecedent: Formula(
+                And(vec![AtomNeq(Expr::new_var("x"), Nil)]),
+                SepConj(vec![
+                    PointsTo(Expr::new_var("z"), Expr::new_var("x")),
+                    LS(Expr::new_var("x"), Nil),
+                ]),
+            ),
+            consequent: Formula(
+                And(vec![AtomNeq(Expr::new_var("x"), Nil)]),
+                SepConj(vec![
+                    LS(Expr::new_var("z"), Nil),
+                    LS(Expr::new_var("y"), Nil),
+                ]),
+            ),
+        };
+        let premisses1 = NonEmptyLS.premisses(invalid_goal1);
+        if let Some(_) = premisses1 {
+            return Err("The first test should have failed!".to_string());
+        }
+
+        let invalid_goal2 = Entailment {
+            antecedent: Formula(
+                And(vec![
+                    AtomNeq(Expr::new_var("x"), Nil),
+                    AtomNeq(Expr::new_var("y"), Expr::new_var("z")),
+                ]),
+                SepConj(vec![LS(Expr::new_var("x"), Nil)]),
+            ),
+            consequent: Formula(
+                And(vec![AtomNeq(Expr::new_var("x"), Nil)]),
+                SepConj(vec![
+                    LS(Expr::new_var("z"), Nil),
+                    LS(Expr::new_var("y"), Nil),
+                ]),
+            ),
+        };
+        let premisses2 = NonEmptyLS.premisses(invalid_goal2);
+        if let Some(_) = premisses2 {
+            return Err("The second test should have failed!".to_string());
+        }
+
+        let valid_goal = Entailment {
+            antecedent: Formula(
+                And(vec![
+                    AtomNeq(Expr::new_var("x"), Nil),
+                    AtomNeq(Expr::new_var("y"), Expr::new_var("z")),
+                ]),
+                SepConj(vec![
+                    PointsTo(Expr::new_var("z"), Expr::new_var("x")),
+                    LS(Expr::new_var("x"), Nil),
+                ]),
+            ),
+            consequent: Formula(
+                And(vec![AtomNeq(Expr::new_var("x"), Nil)]),
+                SepConj(vec![
+                    LS(Expr::new_var("z"), Expr::new_var("y")),
+                    LS(Expr::new_var("y"), Nil),
+                ]),
+            ),
+        };
+        let expected = Entailment {
+            antecedent: Formula(
+                And(vec![
+                    AtomNeq(Expr::new_var("x"), Nil),
+                    AtomNeq(Expr::new_var("y"), Expr::new_var("z")),
+                ]),
+                SepConj(vec![LS(Expr::new_var("x"), Nil)]),
+            ),
+            consequent: Formula(
+                And(vec![AtomNeq(Expr::new_var("x"), Nil)]),
+                SepConj(vec![
+                    LS(Expr::new_var("y"), Nil),
+                    LS(Expr::new_var("x"), Expr::new_var("y")),
+                ]),
+            ),
+        };
+
+        let premisses3 = NonEmptyLS.premisses(valid_goal);
+        if let Some(premisses) = premisses3 {
+            assert_eq!(1, premisses.len());
+            assert_eq!(expected, premisses[0]);
+            Ok(())
+        } else {
+            Err("The third goal should have succeeded!".to_string())
+        }
+    }
+}

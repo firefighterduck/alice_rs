@@ -116,14 +116,13 @@ mod test {
     use super::Substitution;
     use crate::datastructures::{
         AtomSpatial::{PointsTo, LS},
-        Entailment,
-        Expr::{Nil, Var},
+        Entailment, Expr,
+        Expr::Nil,
         Formula,
         Op::{AtomEq, AtomNeq},
         Pure::And,
         Rule,
         Spatial::SepConj,
-        Variable,
     };
 
     #[test]
@@ -131,33 +130,24 @@ mod test {
         let goal = Entailment {
             antecedent: Formula(
                 And(vec![
-                    AtomEq(Var(Variable("x".to_string())), Nil),
-                    AtomNeq(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("x".to_string())),
-                    ),
+                    AtomEq(Expr::new_var("x"), Nil),
+                    AtomNeq(Expr::new_var("y"), Expr::new_var("x")),
                 ]),
-                SepConj(vec![PointsTo(
-                    Var(Variable("y".to_string())),
-                    Var(Variable("x".to_string())),
-                )]),
+                SepConj(vec![PointsTo(Expr::new_var("y"), Expr::new_var("x"))]),
             ),
             consequent: Formula(
-                And(vec![AtomNeq(
-                    Var(Variable("z".to_string())),
-                    Var(Variable("x".to_string())),
-                )]),
-                SepConj(vec![LS(Var(Variable("x".to_string())), Nil)]),
+                And(vec![AtomNeq(Expr::new_var("z"), Expr::new_var("x"))]),
+                SepConj(vec![LS(Expr::new_var("x"), Nil)]),
             ),
         };
 
         let goal_expected = Entailment {
             antecedent: Formula(
-                And(vec![AtomNeq(Var(Variable("y".to_string())), Nil)]),
-                SepConj(vec![PointsTo(Var(Variable("y".to_string())), Nil)]),
+                And(vec![AtomNeq(Expr::new_var("y"), Nil)]),
+                SepConj(vec![PointsTo(Expr::new_var("y"), Nil)]),
             ),
             consequent: Formula(
-                And(vec![AtomNeq(Var(Variable("z".to_string())), Nil)]),
+                And(vec![AtomNeq(Expr::new_var("z"), Nil)]),
                 SepConj(vec![LS(Nil, Nil)]),
             ),
         };

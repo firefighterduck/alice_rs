@@ -32,13 +32,10 @@ mod test {
     use super::EmptyLs;
     use crate::datastructures::{
         AtomSpatial::LS,
-        Entailment,
-        Expr::Var,
-        Formula,
+        Entailment, Expr, Formula,
         Pure::True,
         Rule,
         Spatial::{Emp, SepConj},
-        Variable,
     };
 
     #[test]
@@ -47,10 +44,7 @@ mod test {
             antecedent: Formula(True, Emp),
             consequent: Formula(
                 True,
-                SepConj(vec![LS(
-                    Var(Variable("x".to_string())),
-                    Var(Variable("y".to_string())),
-                )]),
+                SepConj(vec![LS(Expr::new_var("x"), Expr::new_var("y"))]),
             ),
         };
 
@@ -63,10 +57,7 @@ mod test {
             antecedent: Formula(True, Emp),
             consequent: Formula(
                 True,
-                SepConj(vec![LS(
-                    Var(Variable("x".to_string())),
-                    Var(Variable("x".to_string())),
-                )]),
+                SepConj(vec![LS(Expr::new_var("x"), Expr::new_var("x"))]),
             ),
         };
         let goal2_expected = Entailment {

@@ -67,23 +67,19 @@ mod test {
     use super::Frame;
     use crate::datastructures::{
         AtomSpatial::{PointsTo, LS},
-        Entailment,
-        Expr::{Nil, Var},
+        Entailment, Expr,
+        Expr::Nil,
         Formula,
         Pure::True,
         Rule,
         Spatial::SepConj,
-        Variable,
     };
 
     #[test]
     fn test_hypothesis() -> Result<(), String> {
         let goal1 = Entailment {
-            antecedent: Formula(True, SepConj(vec![LS(Var(Variable("x".to_string())), Nil)])),
-            consequent: Formula(
-                True,
-                SepConj(vec![PointsTo(Var(Variable("x".to_string())), Nil)]),
-            ),
+            antecedent: Formula(True, SepConj(vec![LS(Expr::new_var("x"), Nil)])),
+            consequent: Formula(True, SepConj(vec![PointsTo(Expr::new_var("x"), Nil)])),
         };
 
         let premisses1 = Frame.premisses(goal1);
@@ -95,17 +91,14 @@ mod test {
             antecedent: Formula(
                 True,
                 SepConj(vec![
-                    LS(Var(Variable("x".to_string())), Nil),
-                    PointsTo(Var(Variable("z".to_string())), Nil),
+                    LS(Expr::new_var("x"), Nil),
+                    PointsTo(Expr::new_var("z"), Nil),
                 ]),
             ),
-            consequent: Formula(True, SepConj(vec![LS(Var(Variable("x".to_string())), Nil)])),
+            consequent: Formula(True, SepConj(vec![LS(Expr::new_var("x"), Nil)])),
         };
         let goal2_expected = Entailment {
-            antecedent: Formula(
-                True,
-                SepConj(vec![PointsTo(Var(Variable("z".to_string())), Nil)]),
-            ),
+            antecedent: Formula(True, SepConj(vec![PointsTo(Expr::new_var("z"), Nil)])),
             consequent: Formula(True, SepConj(vec![])),
         };
 

@@ -67,14 +67,13 @@ impl Rule for Hypothesis {
 mod test {
     use super::Hypothesis;
     use crate::datastructures::{
-        Entailment,
-        Expr::{Nil, Var},
+        Entailment, Expr,
+        Expr::Nil,
         Formula,
         Op::{AtomEq, AtomNeq},
         Pure::And,
         Rule,
         Spatial::Emp,
-        Variable,
     };
 
     #[test]
@@ -82,16 +81,13 @@ mod test {
         let goal1 = Entailment {
             antecedent: Formula(
                 And(vec![
-                    AtomEq(Var(Variable("y".to_string())), Nil),
-                    AtomNeq(Nil, Var(Variable("z".to_string()))),
+                    AtomEq(Expr::new_var("y"), Nil),
+                    AtomNeq(Nil, Expr::new_var("z")),
                 ]),
                 Emp,
             ),
             consequent: Formula(
-                And(vec![
-                    AtomEq(Nil, Nil),
-                    AtomNeq(Nil, Var(Variable("x".to_string()))),
-                ]),
+                And(vec![AtomEq(Nil, Nil), AtomNeq(Nil, Expr::new_var("x"))]),
                 Emp,
             ),
         };
@@ -104,21 +100,18 @@ mod test {
         let goal2 = Entailment {
             antecedent: Formula(
                 And(vec![
-                    AtomEq(Var(Variable("x".to_string())), Nil),
-                    AtomNeq(Nil, Var(Variable("z".to_string()))),
+                    AtomEq(Expr::new_var("x"), Nil),
+                    AtomNeq(Nil, Expr::new_var("z")),
                 ]),
                 Emp,
             ),
             consequent: Formula(
-                And(vec![
-                    AtomEq(Nil, Nil),
-                    AtomEq(Nil, Var(Variable("x".to_string()))),
-                ]),
+                And(vec![AtomEq(Nil, Nil), AtomEq(Nil, Expr::new_var("x"))]),
                 Emp,
             ),
         };
         let goal2_expected = Entailment {
-            antecedent: Formula(And(vec![AtomNeq(Nil, Var(Variable("z".to_string())))]), Emp),
+            antecedent: Formula(And(vec![AtomNeq(Nil, Expr::new_var("z"))]), Emp),
             consequent: Formula(And(vec![AtomEq(Nil, Nil)]), Emp),
         };
 

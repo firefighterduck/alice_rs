@@ -112,14 +112,13 @@ mod test {
     use super::StarPartial;
     use crate::datastructures::{
         AtomSpatial::PointsTo,
-        Entailment,
-        Expr::{Nil, Var},
+        Entailment, Expr,
+        Expr::Nil,
         Formula,
         Op::AtomNeq,
         Pure::{And, True},
         Rule,
         Spatial::{Emp, SepConj},
-        Variable,
     };
 
     #[test]
@@ -127,21 +126,12 @@ mod test {
         let goal_not_applicable = Entailment {
             antecedent: Formula(
                 And(vec![
-                    AtomNeq(Var(Variable("z".to_string())), Nil),
-                    AtomNeq(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("x".to_string())),
-                    ),
+                    AtomNeq(Expr::new_var("z"), Nil),
+                    AtomNeq(Expr::new_var("y"), Expr::new_var("x")),
                 ]),
                 SepConj(vec![
-                    PointsTo(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("x".to_string())),
-                    ),
-                    PointsTo(
-                        Var(Variable("x".to_string())),
-                        Var(Variable("z".to_string())),
-                    ),
+                    PointsTo(Expr::new_var("y"), Expr::new_var("x")),
+                    PointsTo(Expr::new_var("x"), Expr::new_var("z")),
                 ]),
             ),
             consequent: Formula(True, Emp),
@@ -151,16 +141,10 @@ mod test {
 
         let goal1 = Entailment {
             antecedent: Formula(
-                And(vec![AtomNeq(Var(Variable("z".to_string())), Nil)]),
+                And(vec![AtomNeq(Expr::new_var("z"), Nil)]),
                 SepConj(vec![
-                    PointsTo(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("x".to_string())),
-                    ),
-                    PointsTo(
-                        Var(Variable("x".to_string())),
-                        Var(Variable("z".to_string())),
-                    ),
+                    PointsTo(Expr::new_var("y"), Expr::new_var("x")),
+                    PointsTo(Expr::new_var("x"), Expr::new_var("z")),
                 ]),
             ),
             consequent: Formula(True, Emp),
@@ -171,21 +155,12 @@ mod test {
         let goal_expected1 = Entailment {
             antecedent: Formula(
                 And(vec![
-                    AtomNeq(Var(Variable("z".to_string())), Nil),
-                    AtomNeq(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("x".to_string())),
-                    ),
+                    AtomNeq(Expr::new_var("z"), Nil),
+                    AtomNeq(Expr::new_var("y"), Expr::new_var("x")),
                 ]),
                 SepConj(vec![
-                    PointsTo(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("x".to_string())),
-                    ),
-                    PointsTo(
-                        Var(Variable("x".to_string())),
-                        Var(Variable("z".to_string())),
-                    ),
+                    PointsTo(Expr::new_var("y"), Expr::new_var("x")),
+                    PointsTo(Expr::new_var("x"), Expr::new_var("z")),
                 ]),
             ),
             consequent: Formula(True, Emp),
@@ -203,14 +178,8 @@ mod test {
             antecedent: Formula(
                 True,
                 SepConj(vec![
-                    PointsTo(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("x".to_string())),
-                    ),
-                    PointsTo(
-                        Var(Variable("x".to_string())),
-                        Var(Variable("z".to_string())),
-                    ),
+                    PointsTo(Expr::new_var("y"), Expr::new_var("x")),
+                    PointsTo(Expr::new_var("x"), Expr::new_var("z")),
                 ]),
             ),
             consequent: Formula(True, Emp),
@@ -220,19 +189,10 @@ mod test {
 
         let goal_expected2 = Entailment {
             antecedent: Formula(
-                And(vec![AtomNeq(
-                    Var(Variable("y".to_string())),
-                    Var(Variable("x".to_string())),
-                )]),
+                And(vec![AtomNeq(Expr::new_var("y"), Expr::new_var("x"))]),
                 SepConj(vec![
-                    PointsTo(
-                        Var(Variable("y".to_string())),
-                        Var(Variable("x".to_string())),
-                    ),
-                    PointsTo(
-                        Var(Variable("x".to_string())),
-                        Var(Variable("z".to_string())),
-                    ),
+                    PointsTo(Expr::new_var("y"), Expr::new_var("x")),
+                    PointsTo(Expr::new_var("x"), Expr::new_var("z")),
                 ]),
             ),
             consequent: Formula(True, Emp),
@@ -242,9 +202,9 @@ mod test {
         if let Some(prem) = premisses {
             assert_eq!(1, prem.len());
             assert_eq!(goal_expected2, prem[0]);
-            return Ok(());
+            Ok(())
         } else {
-            return Err(());
+            Err(())
         }
     }
 }

@@ -29,14 +29,13 @@ impl Rule for EqReflexiveR {
 mod test {
     use super::EqReflexiveR;
     use crate::datastructures::{
-        Entailment,
-        Expr::{Nil, Var},
+        Entailment, Expr,
+        Expr::Nil,
         Formula,
         Op::{AtomEq, AtomNeq},
         Pure::{And, True},
         Rule,
         Spatial::Emp,
-        Variable,
     };
 
     #[test]
@@ -44,16 +43,13 @@ mod test {
         let goal1 = Entailment {
             antecedent: Formula(True, Emp),
             consequent: Formula(
-                And(vec![
-                    AtomEq(Nil, Nil),
-                    AtomNeq(Nil, Var(Variable("x".to_string()))),
-                ]),
+                And(vec![AtomEq(Nil, Nil), AtomNeq(Nil, Expr::new_var("x"))]),
                 Emp,
             ),
         };
         let goal1_expected = Entailment {
             antecedent: Formula(True, Emp),
-            consequent: Formula(And(vec![AtomNeq(Nil, Var(Variable("x".to_string())))]), Emp),
+            consequent: Formula(And(vec![AtomNeq(Nil, Expr::new_var("x"))]), Emp),
         };
 
         let premisses1 = EqReflexiveR.premisses(goal1);
@@ -67,16 +63,13 @@ mod test {
         let goal2 = Entailment {
             antecedent: Formula(True, Emp),
             consequent: Formula(
-                And(vec![
-                    AtomEq(Nil, Nil),
-                    AtomEq(Nil, Var(Variable("x".to_string()))),
-                ]),
+                And(vec![AtomEq(Nil, Nil), AtomEq(Nil, Expr::new_var("x"))]),
                 Emp,
             ),
         };
         let goal2_expected = Entailment {
             antecedent: Formula(True, Emp),
-            consequent: Formula(And(vec![AtomEq(Nil, Var(Variable("x".to_string())))]), Emp),
+            consequent: Formula(And(vec![AtomEq(Nil, Expr::new_var("x"))]), Emp),
         };
 
         let premisses2 = EqReflexiveR.premisses(goal2);
@@ -90,10 +83,7 @@ mod test {
         let goal3 = Entailment {
             antecedent: Formula(True, Emp),
             consequent: Formula(
-                And(vec![AtomEq(
-                    Var(Variable("x".to_string())),
-                    Var(Variable("x".to_string())),
-                )]),
+                And(vec![AtomEq(Expr::new_var("x"), Expr::new_var("x"))]),
                 Emp,
             ),
         };
