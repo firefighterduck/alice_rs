@@ -32,11 +32,11 @@ impl Rule for NonEmptyLS {
 
                                     'inner: for ant_spatial in ant_spatials {
                                         if let PointsTo(e5, e6) = ant_spatial {
-                                            if e1 != e5 {
+                                            if *e1 != *e5 {
                                                 continue 'inner;
                                             }
 
-                                            pair_opt = Some((e1.clone(), e6.clone(), e3.clone()));
+                                            pair_opt = Some((e1.clone(), e6.clone(), e2.clone()));
                                             break 'outer;
                                         }
                                     }

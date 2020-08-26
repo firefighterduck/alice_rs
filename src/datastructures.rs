@@ -34,7 +34,7 @@ pub enum Spatial {
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Formula(pub Pure, pub Spatial);
 
-#[derive(PartialEq, Eq, Debug)]
+#[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Entailment {
     pub antecedent: Formula,
     pub consequent: Formula,

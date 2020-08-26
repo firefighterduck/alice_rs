@@ -2,6 +2,10 @@ pub fn find_first<T, P>(vec: &Vec<T>, pred: P) -> Option<usize>
 where
     P: Fn(&T) -> bool,
 {
+    if vec.len() == 0 {
+        return None;
+    }
+
     let mut index: usize = 0;
     while !pred(vec.get(index).unwrap()) {
         index += 1;

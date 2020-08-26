@@ -1,3 +1,4 @@
+mod cleanup;
 mod contradition;
 mod emptyls;
 mod eqreflexivel;
@@ -11,6 +12,7 @@ mod substitution;
 mod tautology;
 mod unrollcollapse;
 
+pub use cleanup::Cleanup;
 pub use contradition::Contradiction;
 pub use emptyls::EmptyLs;
 pub use eqreflexivel::EqReflexiveL;
