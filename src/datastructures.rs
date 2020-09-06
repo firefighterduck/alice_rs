@@ -52,13 +52,6 @@ impl Op {
             &Op::AtomNeq(_, _) => false,
         }
     }
-
-    pub fn is_neq(&self) -> bool {
-        match self {
-            &Op::AtomEq(_, _) => false,
-            &Op::AtomNeq(_, _) => true,
-        }
-    }
 }
 
 impl Expr {
@@ -224,11 +217,10 @@ mod test {
     use super::{
         AtomSpatial::{PointsTo, LS},
         Entailment, Expr,
-        Expr::{Nil, Var},
+        Expr::Nil,
         Formula,
         Pure::{And, True},
         Spatial::{Emp, SepConj},
-        Variable,
     };
 
     #[test]

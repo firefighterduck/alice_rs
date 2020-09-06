@@ -1,14 +1,32 @@
 mod datastructures;
 mod misc;
+mod parser;
 mod rules;
+use combine::{stream::position::Stream, Parser};
 use datastructures::{Entailment, Rule};
+use parser::parse_entailment;
 use rules::*;
+use std::env;
 
 fn main() -> Result<(), ()> {
-    Ok(())
+    let args: Vec<String> = env::args().collect();
+    if args.len() != 2 {
+        println!("Usage: alice \"[Entailment with possibly whitespaces]\"");
+        return Err(());
+    }
+
+    let entailment_raw = &args[1];
+    let entailemnt_parsed_result = parse_entailment().parse(Stream::new(&**entailment_raw));
+
+    if let Ok((entailment, _)) = entailemnt_parsed_result {
+        ps(entailment)
+    } else {
+        println!("{:?}", entailemnt_parsed_result);
+        Err(())
+    }
 }
 
-const rules: [&dyn Rule; 13] = [
+const RULES: [&dyn Rule; 13] = [
     &Tautology,
     &Contradiction,
     &Substitution,
@@ -25,7 +43,7 @@ const rules: [&dyn Rule; 13] = [
 ];
 
 fn ps(goal: Entailment) -> Result<(), ()> {
-    for &rule in rules.iter() {
+    for &rule in RULES.iter() {
         if rule.predicate(&goal) {
             if let Some(new_goals) = rule.premisses(goal.clone()) {
                 for new_goal in new_goals {
