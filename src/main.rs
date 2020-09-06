@@ -11,7 +11,7 @@ use std::env;
 fn main() -> Result<(), ()> {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
-        println!("Usage: alice \"[Entailment with possibly whitespaces]\"");
+        println!("Usage: alice \"[Entailment with possible whitespaces]\"");
         return Err(());
     }
 

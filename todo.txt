@@ -1,3 +1,0 @@
-- Finish naive implementation that uses much memory and takes long
-- Reimplement the whole thing more efficient (Numbers/Tables/Bits)
-- Make the Efficient Implementation parallel
