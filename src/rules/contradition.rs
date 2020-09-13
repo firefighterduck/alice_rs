@@ -1,5 +1,6 @@
 use crate::datastructures::{Entailment, Op::AtomNeq, Pure::And, Rule};
 
+/// Π ∧ E!=E | Σ  |-  Π' | Σ'
 pub struct Contradiction;
 impl Rule for Contradiction {
     fn predicate(&self, _goal: &Entailment) -> bool {

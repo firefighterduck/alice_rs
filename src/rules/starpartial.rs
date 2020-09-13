@@ -3,7 +3,9 @@ use crate::datastructures::{
     Spatial::SepConj,
 };
 
+/// Π ∧ E1!=E3 | E1->E2 * E3->E4 * Σ  |-  Π' | Σ' ==> Π | E1->E2 * E3->E4 * Σ  |-  Π' | Σ'
 pub struct StarPartial;
+
 impl Rule for StarPartial {
     fn predicate(&self, goal: &Entailment) -> bool {
         let mut add_new = false;

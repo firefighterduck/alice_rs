@@ -8,11 +8,11 @@ use parser::parse_entailment;
 use rules::*;
 use std::env;
 
-fn main() -> Result<(), ()> {
+fn main() -> Result<(), String> {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
         println!("Usage: alice \"[Entailment with possible whitespaces]\"");
-        return Err(());
+        return Err("Wrong number of Arguments!".to_string());
     }
 
     let entailment_raw = &args[1];
@@ -22,27 +22,32 @@ fn main() -> Result<(), ()> {
         ps(entailment)
     } else {
         println!("{:?}", entailemnt_parsed_result);
-        Err(())
+        Err("Could not parse input correctly!".to_string())
     }
 }
 
 const RULES: [&dyn Rule; 13] = [
+    // Axioms
     &Tautology,
     &Contradiction,
+    // Bring the entailment to normal form
     &Substitution,
     &EqReflexiveL,
     &NilNotLVal,
     &StarPartial,
     &UnrollCollapse,
+    // Simplification without normalform needed
     &EqReflexiveR,
     &EmptyLs,
     &Hypothesis,
+    // Simplifications that need normalform
     &Frame,
     &NonEmptyLS,
+    // Rule to cleanup empty vectors to enum counterparts
     &Cleanup,
 ];
 
-fn ps(goal: Entailment) -> Result<(), ()> {
+fn ps(goal: Entailment) -> Result<(), String> {
     for &rule in RULES.iter() {
         if rule.predicate(&goal) {
             if let Some(new_goals) = rule.premisses(goal.clone()) {
@@ -53,7 +58,7 @@ fn ps(goal: Entailment) -> Result<(), ()> {
             }
         }
     }
-    Err(())
+    Err("Entailment is invalid!".to_string())
 }
 
 #[cfg(test)]
@@ -96,6 +101,6 @@ pub mod test {
                 SepConj(vec![PointsTo(Expr::new_var("y"), Nil)]),
             ),
         };
-        assert_eq!(Err(()), ps(invalid));
+        assert_eq!(Err("Entailment is invalid!".to_string()), ps(invalid));
     }
 }

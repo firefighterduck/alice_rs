@@ -1,6 +1,8 @@
 use crate::datastructures::{Entailment, Pure::True, Rule, Spatial::Emp};
 
+///  Π | emp  |-  true | emp
 pub struct Tautology;
+
 impl Rule for Tautology {
     fn predicate(&self, _goal: &Entailment) -> bool {
         true

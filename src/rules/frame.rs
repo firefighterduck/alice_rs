@@ -3,6 +3,8 @@ use crate::datastructures::{
     Entailment, Rule,
     Spatial::SepConj,
 };
+
+/// Π | Σ  |-  Π' | Σ' ==> Π | S * Σ  |-  Π' | S * Σ'
 pub struct Frame;
 
 impl Rule for Frame {

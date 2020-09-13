@@ -9,6 +9,8 @@ use crate::{
     },
     misc::find_and_remove,
 };
+
+/// Π ∧ E1!=E3 | Σ  |-  Π' | ls(E2,E3) * Σ' ==> Π ∧ E1!=E3 | E1->E2 * Σ  |-  Π' | ls(E1,E3) * Σ'
 pub struct NonEmptyLS;
 
 impl Rule for NonEmptyLS {

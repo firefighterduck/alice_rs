@@ -14,7 +14,9 @@ use crate::{
     misc::find_and_remove,
 };
 
+/// Π[E/x] | Σ[E/x]  |-  Π'[E/x] | Σ'[E/x] ==> Π ∧ x=E | Σ  |-  Π' | Σ'
 pub struct Substitution;
+
 impl Substitution {
     fn subst_impl(subst: &(String, Expr), x: &Expr) -> Expr {
         match x {

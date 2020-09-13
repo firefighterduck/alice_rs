@@ -3,6 +3,7 @@ use crate::{
     misc::find_and_remove,
 };
 
+/// Π | Σ  |-  Π' | Σ' ==>  Π ∧ E=E | Σ  |-  Π' | Σ'
 pub struct EqReflexiveL;
 impl Rule for EqReflexiveL {
     fn predicate(&self, _goal: &Entailment) -> bool {

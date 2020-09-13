@@ -4,6 +4,8 @@ use crate::datastructures::{
     Pure::And,
     Rule,
 };
+
+/// Π | Σ  |-  Π' | Σ' ==> Π ∧ P | Σ  |-  Π' ∧ P | Σ'
 pub struct Hypothesis;
 
 impl Rule for Hypothesis {

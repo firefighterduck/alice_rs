@@ -9,7 +9,9 @@ use crate::datastructures::{
     Spatial::SepConj,
 };
 
+/// Π ∧ E1!=nil | E1->E2 * Σ  |-  Π' | Σ' ==> Π | E1->E2 * Σ  |-  Π' | Σ'
 pub struct NilNotLVal;
+
 impl Rule for NilNotLVal {
     fn predicate(&self, goal: &Entailment) -> bool {
         let mut add_new = false;

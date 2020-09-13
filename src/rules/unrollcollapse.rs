@@ -13,6 +13,7 @@ use crate::{
     misc::find_and_remove,
 };
 
+/// Π ∧ E1=E2 | Σ  |-  Π' | Σ' ==> Π ∧ E1!=E2 ∧ x!=E2 | E1->x ∗ x->E2 ∗ Σ  |-  Π' | Σ' ==> Π | ls(E1,E2) ∗ Σ  |-  Π' | Σ' (for a new x)
 pub struct UnrollCollapse;
 
 impl Rule for UnrollCollapse {

@@ -135,6 +135,8 @@ where
     (parse_pure(), lex_char('|'), parse_spatial()).map(|(pure, _, spatial)| Formula(pure, spatial))
 }
 
+/// Just a simple parser for entailments based on parser combinators
+
 pub fn parse_entailment<Input>() -> impl Parser<Input, Output = Entailment>
 where
     Input: Stream<Token = char>,

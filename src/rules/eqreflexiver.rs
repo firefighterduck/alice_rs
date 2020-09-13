@@ -1,5 +1,7 @@
 use crate::datastructures::{Entailment, Op::AtomEq, Pure::And, Rule};
 use crate::misc::find_and_remove;
+
+/// Π | Σ  |-  Π' | Σ' ==> Π | Σ  |-  Π' ∧ E=E | Σ'
 pub struct EqReflexiveR;
 
 impl Rule for EqReflexiveR {

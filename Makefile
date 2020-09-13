@@ -1,14 +1,18 @@
 CRG = cargo
-source = src/main.rs
+source = src/*.*
 
-.PHONY: clean all build_new
+.PHONY: all buil clean
 
-build: $(source)
-		$(CRG) build --release
-		mv ./target/release/alice_rs.exe alice.exe
+build_win: $(source)
+		$(CRG) build --release --target x86_64-pc-windows-msvc
+		mv ./target/x86_64-pc-windows-msvc/release/alice_rs.exe alice.exe
+
+build_nix: $(source)
+		$(CRG) build --release --target x86_64-unknown-linux-gnu
+		mv ./target/x86_64-unknown-linux-gnu/release/alice_rs alice
 
 clean:
-		rm alice.exe
+		rm alice*
 		cargo clean
 		
-build_new: clean build
+all: clean build

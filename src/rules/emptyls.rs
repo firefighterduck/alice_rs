@@ -2,6 +2,8 @@ use crate::{
     datastructures::{AtomSpatial::LS, Entailment, Rule, Spatial::SepConj},
     misc::find_and_remove,
 };
+
+/// Π | Σ  |-  Π' | Σ' ==> Π | Σ  |-  Π' | ls(E,E) * Σ'
 pub struct EmptyLs;
 
 impl Rule for EmptyLs {
