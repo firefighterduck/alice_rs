@@ -136,7 +136,6 @@ where
 }
 
 /// Just a simple parser for entailments based on parser combinators
-
 pub fn parse_entailment<Input>() -> impl Parser<Input, Output = Entailment>
 where
     Input: Stream<Token = char>,

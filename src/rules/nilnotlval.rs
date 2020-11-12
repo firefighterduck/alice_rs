@@ -22,10 +22,8 @@ impl Rule for NilNotLVal {
             if let And(pure_ops) = antecedent.get_pure() {
                 for points_to_fact in points_to_facts {
                     if let PointsTo(l, _) = points_to_fact {
-                        if let Some(_) = pure_ops.iter().find(move |op| match op {
-                            &AtomNeq(le, re) => {
-                                (*le == *l && *re == Nil) || (*re == *l && *le == Nil)
-                            }
+                        if pure_ops.iter().any(move |op| match op {
+                            AtomNeq(le, re) => (le == l && re == &Nil) || (re == l && le == &Nil),
                             _ => false,
                         }) {
                             continue;
@@ -53,16 +51,10 @@ impl Rule for NilNotLVal {
             if let Some(PointsTo(nonnil, _)) = points_to_facts.iter().find(|ptf| {
                 if let PointsTo(l, _) = ptf {
                     if let And(pure_ops) = &ant_pure {
-                        if let Some(_) = pure_ops.iter().find(|&op| match op {
-                            AtomNeq(le, re) => {
-                                (*le == *l && *re == Nil) || (*re == *l && *le == Nil)
-                            }
+                        !pure_ops.iter().any(|op| match op {
+                            AtomNeq(le, re) => (le == l && re == &Nil) || (re == l && le == &Nil),
                             _ => false,
-                        }) {
-                            false
-                        } else {
-                            true
-                        }
+                        })
                     } else {
                         true
                     }
@@ -78,7 +70,7 @@ impl Rule for NilNotLVal {
             Nil
         };
 
-        if let &Var(_) = &points_to_to_add {
+        if let Var(_) = points_to_to_add {
             if let And(pure_ops) = &mut ant_pure {
                 pure_ops.push(AtomNeq(points_to_to_add, Nil));
             } else {
@@ -188,9 +180,9 @@ mod test {
         if let Some(prem) = premisses {
             assert_eq!(1, prem.len());
             assert_eq!(goal_expected2, prem[0]);
-            return Ok(());
+            Ok(())
         } else {
-            return Err(());
+            Err(())
         }
     }
 }

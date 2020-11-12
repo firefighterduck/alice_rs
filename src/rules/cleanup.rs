@@ -15,22 +15,22 @@ impl Rule for Cleanup {
     fn premisses(&self, goal: Entailment) -> Option<Vec<Entailment>> {
         let (mut antecedent, mut consequent) = goal.destroy();
         let change_apv = if let And(apv) = antecedent.get_pure() {
-            apv.len() == 0
+            apv.is_empty()
         } else {
             false
         };
         let change_asv = if let SepConj(asv) = antecedent.get_spatial() {
-            asv.len() == 0
+            asv.is_empty()
         } else {
             false
         };
         let change_cpv = if let And(cpv) = consequent.get_pure() {
-            cpv.len() == 0
+            cpv.is_empty()
         } else {
             false
         };
         let change_csv = if let SepConj(csv) = consequent.get_spatial() {
-            csv.len() == 0
+            csv.is_empty()
         } else {
             false
         };

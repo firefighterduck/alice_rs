@@ -10,8 +10,8 @@ impl Rule for Tautology {
 
     fn premisses(&self, goal: Entailment) -> Option<Vec<Entailment>> {
         if let Emp = goal.antecedent.get_spatial() {
-            if let &Emp = goal.consequent.get_spatial() {
-                if let &True = goal.consequent.get_pure() {
+            if let Emp = *goal.consequent.get_spatial() {
+                if let True = *goal.consequent.get_pure() {
                     return Some(vec![]);
                 }
             }
@@ -65,7 +65,7 @@ mod test {
         };
 
         let premisses = Tautology.premisses(goal2);
-        if let Some(_) = premisses {
+        if premisses.is_some() {
             return Err("Expected second test to fail!".to_string());
         }
 

@@ -55,7 +55,7 @@ impl Rule for UnrollCollapse {
                         ant_spatial = ant_spatial.add(PointsTo(new_x, r));
                         let new_goal2 = Entailment {
                             antecedent: Formula(new_pure2, ant_spatial),
-                            consequent: consequent,
+                            consequent,
                         };
 
                         return Some(vec![new_goal1, new_goal2]);

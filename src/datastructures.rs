@@ -48,8 +48,8 @@ pub trait Rule {
 impl Op {
     pub fn is_eq(&self) -> bool {
         match self {
-            &Op::AtomEq(_, _) => true,
-            &Op::AtomNeq(_, _) => false,
+            Op::AtomEq(_, _) => true,
+            Op::AtomNeq(_, _) => false,
         }
     }
 }
@@ -151,29 +151,31 @@ impl Entailment {
 
         if let Pure::And(pures) = self.antecedent.get_pure() {
             'outer: for o_var in vars.as_slice() {
-                if !pures.iter().any(|x| {
+                let found_inequality = pures.iter().any(|x| {
                     if let Op::AtomNeq(l, r) = x {
                         (*l == Expr::Var(o_var.clone()) && *r == Expr::Nil)
                             || (*r == Expr::Var(o_var.clone()) && *l == Expr::Nil)
                     } else {
-                        return false; //There are no AtomEqs allowed for normal form
+                        false //There are no AtomEqs allowed for normal form
                     }
-                }) {
+                });
+                if !found_inequality {
                     return false; //There is no inequality for the variable o_var with Nil which is necessary for normal form
                 }
                 for i_var in vars.as_slice() {
                     if i_var == o_var {
                         continue 'outer;
                     }
-                    if !pures.iter().any(|x| {
+                    let found_inequality = pures.iter().any(|x| {
                         if let Op::AtomNeq(l, r) = x {
                             (*l == Expr::Var(o_var.clone()) && *r == Expr::Var(i_var.clone()))
                                 || (*r == Expr::Var(o_var.clone())
                                     && *l == Expr::Var(i_var.clone()))
                         } else {
-                            return false; //There are no AtomEqs allowed for normal form
+                            false //There are no AtomEqs allowed for normal form
                         }
-                    }) {
+                    });
+                    if !found_inequality {
                         return false; //There is no inequality for the variable o_var with i_var which is necessary for normal form
                     }
                 }
@@ -186,17 +188,11 @@ impl Entailment {
 
 impl AtomSpatial {
     pub fn is_points_to(&self) -> bool {
-        match self {
-            AtomSpatial::PointsTo(_, _) => true,
-            _ => false,
-        }
+        matches!(self, AtomSpatial::PointsTo(_, _))
     }
 
     pub fn is_ls(&self) -> bool {
-        match self {
-            AtomSpatial::LS(_, _) => true,
-            _ => false,
-        }
+        matches!(self, AtomSpatial::LS(_, _))
     }
 }
 

@@ -85,7 +85,7 @@ mod test {
         };
 
         let premisses1 = Frame.premisses(goal1);
-        if let Some(_) = premisses1 {
+        if premisses1.is_some() {
             return Err("Expected first test to fail!".to_string());
         }
 

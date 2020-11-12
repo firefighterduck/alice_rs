@@ -100,9 +100,9 @@ impl Rule for Substitution {
 
                 if let AtomEq(l, r) = elem {
                     if let Var(v) = l {
-                        subst = (v.0.clone(), r.clone());
+                        subst = (v.0, r.clone());
                     } else if let Var(v) = r {
-                        subst = (v.0.clone(), l.clone());
+                        subst = (v.0, l.clone());
                     }
 
                     return Some(vec![Self::substitute(subst, goal)]);

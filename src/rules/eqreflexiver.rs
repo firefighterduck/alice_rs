@@ -13,10 +13,12 @@ impl Rule for EqReflexiveR {
         let (antecedent, mut consequent) = goal.destroy();
 
         if let And(pure_vec) = consequent.get_pure_mut() {
-            if let Some(_) = find_and_remove(pure_vec, move |x| match x {
-                AtomEq(l, r) => *l == *r,
+            if find_and_remove(pure_vec, move |x| match x {
+                AtomEq(l, r) => l == r,
                 _ => false,
-            }) {
+            })
+            .is_some()
+            {
                 return Some(vec![Entailment {
                     antecedent,
                     consequent,

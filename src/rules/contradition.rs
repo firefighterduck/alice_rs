@@ -9,9 +9,9 @@ impl Rule for Contradiction {
 
     fn premisses(&self, goal: Entailment) -> Option<Vec<Entailment>> {
         if let And(pure_sub) = goal.antecedent.get_pure() {
-            if let Some(_) = pure_sub.iter().find(|&x| match x {
-                AtomNeq(l, r) => *l == *r,
-                _ => return false,
+            if pure_sub.iter().any(|x| match x {
+                AtomNeq(l, r) => l == r,
+                _ => false,
             }) {
                 return Some(vec![]);
             }
@@ -57,7 +57,7 @@ mod test {
         };
 
         let premisses = Contradiction.premisses(goal2);
-        if let Some(_) = premisses {
+        if premisses.is_some() {
             return Err("Expected second test to fail!".to_string());
         }
 

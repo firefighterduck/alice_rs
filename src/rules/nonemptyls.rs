@@ -113,7 +113,7 @@ mod test {
             ),
         };
         let premisses1 = NonEmptyLS.premisses(invalid_goal1);
-        if let Some(_) = premisses1 {
+        if premisses1.is_some() {
             return Err("The first test should have failed!".to_string());
         }
 
@@ -134,7 +134,7 @@ mod test {
             ),
         };
         let premisses2 = NonEmptyLS.premisses(invalid_goal2);
-        if let Some(_) = premisses2 {
+        if premisses2.is_some() {
             return Err("The second test should have failed!".to_string());
         }
 

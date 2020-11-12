@@ -25,9 +25,9 @@ impl Rule for StarPartial {
                                     continue 'inner;
                                 }
 
-                                if let Some(_) = pure_ops.iter().find(move |op| match op {
-                                    &AtomNeq(le, re) => {
-                                        (*le == *l1 && *re == *l2) || (*re == *l1 && *le == *l2)
+                                if pure_ops.iter().any(move |op| match op {
+                                    AtomNeq(le, re) => {
+                                        (le == l1 && re == l2) || (re == l1 && le == l2)
                                     }
                                     _ => false,
                                 }) {
@@ -65,9 +65,9 @@ impl Rule for StarPartial {
                                     continue 'inner;
                                 }
 
-                                if let Some(_) = pure_ops.iter().find(move |op| match op {
-                                    &AtomNeq(le, re) => {
-                                        (*le == *l1 && *re == *l2) || (*re == *l1 && *le == *l2)
+                                if pure_ops.iter().any(move |op| match op {
+                                    AtomNeq(le, re) => {
+                                        (le == l1 && re == l2) || (re == l1 && le == l2)
                                     }
                                     _ => false,
                                 }) {
@@ -85,7 +85,7 @@ impl Rule for StarPartial {
                 let mut second = None;
                 for atom_spatial in atom_spatials {
                     if let PointsTo(l, _) = atom_spatial {
-                        if let &Some(_) = &first {
+                        if first.is_some() {
                             second = Some(l.clone());
                             break;
                         }

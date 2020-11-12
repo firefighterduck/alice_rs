@@ -47,6 +47,7 @@ const RULES: [&dyn Rule; 13] = [
     &Cleanup,
 ];
 
+/// The actual decision procedure
 fn ps(goal: Entailment) -> Result<(), String> {
     for &rule in RULES.iter() {
         if rule.predicate(&goal) {

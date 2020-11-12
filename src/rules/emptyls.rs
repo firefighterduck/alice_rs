@@ -14,10 +14,12 @@ impl Rule for EmptyLs {
         let (antecedent, mut consequent) = goal.destroy();
 
         if let SepConj(spatial_vec) = consequent.get_spatial_mut() {
-            if let Some(_) = find_and_remove(spatial_vec, move |x| match x {
-                LS(l, r) => *l == *r,
+            if find_and_remove(spatial_vec, move |x| match x {
+                LS(l, r) => l == r,
                 _ => false,
-            }) {
+            })
+            .is_some()
+            {
                 return Some(vec![Entailment {
                     antecedent,
                     consequent,
@@ -51,7 +53,7 @@ mod test {
         };
 
         let premisses1 = EmptyLs.premisses(goal1);
-        if let Some(_) = premisses1 {
+        if premisses1.is_some() {
             return Err("Expected first test to fail!".to_string());
         }
 

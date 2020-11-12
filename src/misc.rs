@@ -1,8 +1,8 @@
-pub fn find_first<T, P>(vec: &Vec<T>, pred: P) -> Option<usize>
+pub fn find_first<T, P>(vec: &[T], pred: P) -> Option<usize>
 where
     P: Fn(&T) -> bool,
 {
-    if vec.len() == 0 {
+    if vec.is_empty() {
         return None;
     }
 
