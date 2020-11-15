@@ -1,3 +1,5 @@
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md) ![GitHub](https://img.shields.io/github/license/firefighterduck/alice_rs)
+
 # Alice_rs
 Alice_rs is a small proof-of-concept reference implementation of a decision procedure for [A Decidable Fragment of Separation Logic](http://www0.cs.ucl.ac.uk/staff/p.ohearn/papers/unroll_collapse_withproofs.pdf]) and was written as supplemental material for [this](https://www21.in.tum.de/teaching/sar/SS20/8.pdf) seminar paper.
 The name comes from a wrong pronunciation of the ls structure. The correct pronunciation would be "list structure" but it could also be read as "al-as structure" which sounds a bit like alice.
