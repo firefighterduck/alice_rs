@@ -42,4 +42,4 @@ The current way of doing this is via unit tests in the same file.
 This may change at a later point of time.
 
 ## Code of Conduct
-By interacting in any way with this project (other than forking) you accept the [Code of Conduct](CODE_OF_CONDUCT.md).
+By interacting in any way with this project (other than forking) thou shalt comply with the [Code of Conduct](CODE_OF_CONDUCT.md).
