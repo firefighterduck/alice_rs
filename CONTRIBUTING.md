@@ -26,12 +26,14 @@ It is recommended to also use the rust-analyzer extension.
 
 ## How can I contribute?
 Currently there is no fixed contribution schema.
-You can make bug reports via Github issues, submit changes via Pull Requests or simply fork the repository and make your own version of Alice_rs.
+It is only advised to follow the standard Github workflow (open an issue, fork the project, make a pull request).
+You are also free to make bug reports via Github issues, submit changes via Pull Requests or simply fork the repository and make your own version of Alice_rs.
 Feel free to contribute in any way you like.
 
 ## Styleguides
 There is no real style guide used for this project.
 As long as the code is formatted with rustfmt (e.g. via the rust-analyzer extension in VS Code) and checked against the clippy linter it should not be rejected for style reasons.
+Both come with every installation of the rustc compiler via rustup (see e.g. the Installation guide in the [README](README.md#installation)).
 
 The current internal representation is based on functional programming paradigms but this may also change in the future and is not required to imitate.
 

@@ -1,5 +1,5 @@
 # Alice_rs
-Alice_rs is a small proof-of-concept reference implementation of a decision procedure for [A Decidable Fragment of Separation Logic](http://www0.cs.ucl.ac.uk/staff/p.ohearn/papers/unroll_collapse_withproofs.pdf]) and was written as supplemental material for [this](https://www21.in.tum.de/teaching/sar/SS20/8.pdf) seminar paper.
+Alice_rs is a small proof-of-concept reference implementation of a decision procedure for [A Decidable Fragment of Separation Logic](http://www0.cs.ucl.ac.uk/staff/p.ohearn/papers/unroll_collapse_withproofs.pdf) and was written as supplemental material for [this](https://www21.in.tum.de/teaching/sar/SS20/8.pdf) seminar paper.
 The name comes from a wrong pronunciation of the ls structure. The correct pronunciation would be "list structure" but it could also be read as "al-as structure" which sounds a bit like alice.
 
 ## Installation
@@ -17,7 +17,13 @@ Example:
 ```bash
 alice_rs "And[Neq(x,y)]|SepConj[x->y,y->Nil] |- True|SepConj[ls(x, Nil)]"
 ```
-The grammar for these strings is based on standard separation logic formulæ (definitions in order of priority):
+For those unexperienced in this kind of separation logic, here is a short introduction to the semantics:<br />
+An entailment describes that for all states (a formal description of a stack and heap architecture) for which the left formula holds the right formula should hold as well.
+A formula consists of statements about a state.
+These statements are organized in two parts: first the pure logic (reasons about equality) and the spatial logic (reasons about the heap structure).<br />
+For more information please have a look at the theoretical background mentioned above ([this](http://www0.cs.ucl.ac.uk/staff/p.ohearn/papers/unroll_collapse_withproofs.pdf) and [this](https://www21.in.tum.de/teaching/sar/SS20/8.pdf)).
+
+The grammar for the entailment strings is based on standard separation logic formulæ (definitions in order of priority):
 
 Nonterminal | | Definition
 ------- | ---- | --------
@@ -48,3 +54,9 @@ Otherwise either a parser error occurred or the entailment is found invalid. The
 
 ## Project Status
 Despite this project being a complete proof-of-concept implementation further development is planned. Especially the internal representation will be the issue of further improvements.
+
+## Contributing
+See the [Contributing](CONTRIBUTING.md) file.
+
+## License
+Alice_rs is licensed under the [MIT license](LICENSE).
